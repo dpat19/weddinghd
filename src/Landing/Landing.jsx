@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar'
 import './Landing.css'
 
+
 //63,18,-0
 
 
@@ -45,8 +46,8 @@ const landing = () => {
     <><div className='image-container'>
       
 
-            <img src="dist/assets/DhruvHernis.png" className='image' />
-            <img src="dist/assets/Differet.png" className='image' />
+            <img src={`./weddinghd/HDW-07.png`} className='image' alt='pic' />
+            <img src="./weddinghd/Differet.png" className='image' />
             
         </div>
         <div className='text'>
