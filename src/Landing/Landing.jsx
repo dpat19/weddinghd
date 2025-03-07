@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Navbar/Navbar'
 import './Landing.css'
+import hd from "../assets/HDW-07.png"
+import words from "../assets/Differet.png"
 
 
 //63,18,-0
@@ -46,9 +48,9 @@ const landing = () => {
     <><div className='image-container'>
       
 
-            <img src={`./weddinghd/HDW-07.png`} className='image' alt='pic' />
-            <img src="./weddinghd/Differet.png" className='image' />
-            
+            <img src={hd} className='image' alt='pic' />
+            <img src={words} className='image' />
+    
         </div>
         <div className='text'>
             <p>
