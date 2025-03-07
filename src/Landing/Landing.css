@@ -1,0 +1,70 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Parisienne&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allura&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tangerine:wght@400;700&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
+
+
+.text{
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 400;
+    text-align: center;
+    font-size: 1.5vw; /* Make text smaller than the second image */
+    margin-top: 10px; /* Space between the image and the text */
+    color: #000;
+}
+
+
+
+
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.image {
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+
+/* First image (super small) */
+.image:first-child {
+    width: 3vw; /* Extremely small */
+}
+
+/* Second image (still bigger) */
+.image:last-child {
+    width: 25vw; /* Bigger than the first image */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .image:first-child {
+        width: 6vw;
+    }
+    .image:last-child {
+        width: 35vw;
+    }
+    .text {
+        font-size: 2vw; /* Slightly smaller text on medium screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .image:first-child {
+        width: 8vw;
+    }
+    .image:last-child {
+        width: 45vw;
+    }
+    .text {
+        font-size: 3vw; /* Smaller text on smaller screens */
+    }
+}

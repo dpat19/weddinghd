@@ -1,0 +1,66 @@
+/* Navbar Styling */
+.navbar {
+    padding: 20px 50px; /* Adjust padding for better space distribution */
+    width: 100%; /* Ensure it takes up the full width of the screen */
+    max-width: 1300px; /* Limit the width of the navbar on larger screens */
+    margin: 0 auto; /* Center the navbar horizontally */
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+.nav-list {
+    display: flex;
+    justify-content: space-evenly; /* Evenly space out items */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap; /* Prevent wrapping to the next line */
+    width: 100%; /* Ensure the list takes up full width */
+    overflow: hidden; /* Prevent items from spilling */
+}
+
+.nav-item {
+    margin: 0 10px; /* Control space between navbar items */
+    flex-shrink: 0; /* Prevent items from shrinking */
+}
+
+.nav-link {
+    color: rgb(63, 18, 0); /* Set font color to rgb(63, 18, 0) */
+    text-decoration: none;
+    font-size: 20px; /* Normal font size */
+    padding-bottom: 5px;
+    transition: color 0.3s ease;
+    display: block; /* Ensures clickable area */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.nav-link:hover {
+    color: #f39c12; /* Change color on hover */
+}
+
+/* Line under the active tab */
+.nav-item.active .nav-link {
+    border-bottom: 2px solid #f39c12; /* Line under active tab */
+    color: #f39c12; /* Active tab color */
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .nav-link {
+        font-size: 16px; /* Slightly smaller text for medium screens */
+    }
+    .nav-item {
+        margin: 0 15px; /* Reduce space on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-list {
+        justify-content: center; /* Center items on mobile screens */
+    }
+    .nav-link {
+        font-size: 14px; /* Smaller text on mobile screens */
+    }
+    .nav-item {
+        margin: 0 10px; /* Consistent spacing on mobile */
+    }
+}
