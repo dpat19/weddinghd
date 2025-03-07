@@ -21,14 +21,14 @@ body {
 /* Background image for small screens (e.g., mobile) */
 @media (max-width: 600px) {
   body {
-    background-image: url('./weddinghd/SmallerPic.JPG');
+    background-image: url('./assets/SmallerPic.JPG');
   }
 }
 
 /* Background image for medium screens (e.g., tablets) */
 @media (min-width: 601px) and (max-width: 1024px) {
   body {
-    background-image: url('./weddinghd/SmallerPic.JPG');
+    background-image: url('./assets/SmallerPic.JPG');
   }
 }
 

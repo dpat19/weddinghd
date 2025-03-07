@@ -57,7 +57,7 @@ const landing = () => {
                 May 9,2026 Little Egg Harbor Township , NJ
              </p>
              <p>
-             <Countdown />Days to gos!
+             <Countdown />Days to go!
              </p>
 
         
