@@ -43,10 +43,10 @@ const landing = () => {
 
     return (
     <><div className='image-container'>
-      <img src='src/assets/react.svg'></img>
+      
 
-            <img src="public/SmallerPic.JPG" className='image' />
-            <img src="src/assets/Differet.png" className='image' />
+            <img src="dist/assets/DhruvHernis.png" className='image' />
+            <img src="dist/assets/Differet.png" className='image' />
             
         </div>
         <div className='text'>
