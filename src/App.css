@@ -11,24 +11,20 @@ body {
   background-image: url('./assets/Landinppic.JPEG');
   background-size: cover;
   background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Align content to the top */
-  align-items: center;
-  height: 100%;
+  
 }
 
 /* Background image for small screens (e.g., mobile) */
 @media (max-width: 600px) {
   body {
-    background-image: url('./assets/SmallerPic.JPG');
+    background-image: url('./assets/Smaller2.JPG');
   }
 }
 
 /* Background image for medium screens (e.g., tablets) */
 @media (min-width: 601px) and (max-width: 1024px) {
   body {
-    background-image: url('./assets/SmallerPic.JPG');
+    background-image: url('./assets/Smaller2.JPG');
   }
 }
 
@@ -39,43 +35,4 @@ body {
   }
 }
 
-/* Style for the content container */
-div {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Ensure content is at the top */
-  align-items: center;
-}
 
-/* Style for Navbar */
-Navbar {
-  width: 100%;
-  padding: 20px 0;  /* Make the navbar bigger */
-  background-color: rgba(0, 0, 0, 0.7);  /* Optional: add a background to the navbar */
-  color: white;  /* Text color */
-  text-align: center;
-  font-size: 1.5rem;  /* Make the font bigger */
-  z-index: 10;  /* Ensure the navbar is above other content */
-  position: relative;
-  top: 0;  /* Ensure navbar stays at the top */
-}
-
-/* Optional: Styling for LandingPage */
-LandingPage {
-  position: relative;
-  top: 50px;  /* Adjust as needed for your layout */
-  z-index: 10;  /* Ensure LandingPage is above background */
-  padding: 20px;
-  text-align: center;
-  color: white;
-  font-size: 1.5rem;
-  width: 100%;
-}
-
-/* Optional: Adjust text and other elements to prevent overlap */
-h1, p {
-  margin: 0;
-  padding: 0;
-}

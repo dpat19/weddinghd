@@ -1,12 +1,15 @@
 /* Navbar Styling */
 .navbar {
-    padding: 20px 50px; /* Adjust padding for better space distribution */
+    padding: 500px 10px; /* Adjust padding for better space distribution */
     width: 100%; /* Ensure it takes up the full width of the screen */
-    max-width: 1300px; /* Limit the width of the navbar on larger screens */
+    max-width: 1600px; /* Limit the width of the navbar on larger screens */
     margin: 0 auto; /* Center the navbar horizontally */
     box-sizing: border-box; /* Ensure padding is included in width calculation */
+   /* Optional: Add a background color to the navbar */
+    color: white; /* Navbar text color */
 }
 
+/* Navbar List Styling */
 .nav-list {
     display: flex;
     justify-content: space-evenly; /* Evenly space out items */
@@ -18,21 +21,24 @@
     overflow: hidden; /* Prevent items from spilling */
 }
 
+/* Navbar Item Styling */
 .nav-item {
-    margin: 0 10px; /* Control space between navbar items */
+    margin: 0 50px; /* Control space between navbar items */
     flex-shrink: 0; /* Prevent items from shrinking */
 }
 
+/* Navbar Link Styling */
 .nav-link {
     color: rgb(63, 18, 0); /* Set font color to rgb(63, 18, 0) */
     text-decoration: none;
-    font-size: 20px; /* Normal font size */
+    font-size: 100px; /* Normal font size */
     padding-bottom: 5px;
     transition: color 0.3s ease;
     display: block; /* Ensures clickable area */
     white-space: nowrap; /* Prevent text from wrapping */
 }
 
+/* Navbar Link Hover Styling */
 .nav-link:hover {
     color: #f39c12; /* Change color on hover */
 }
