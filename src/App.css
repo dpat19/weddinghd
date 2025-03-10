@@ -6,33 +6,30 @@ html, body {
   overflow: hidden;  /* Prevent scrolling */
 }
 
-/* Set the background image for the body */
-body {
+/* Set the background image for the body only when on the homepage */
+body.home {
   background-image: url('./assets/Landinppic.JPEG');
   background-size: cover;
   background-position: center;
-  
 }
 
 /* Background image for small screens (e.g., mobile) */
 @media (max-width: 600px) {
-  body {
+  body.home {
     background-image: url('./assets/Smaller2.JPG');
   }
 }
 
 /* Background image for medium screens (e.g., tablets) */
 @media (min-width: 601px) and (max-width: 1024px) {
-  body {
+  body.home {
     background-image: url('./assets/Smaller2.JPG');
   }
 }
 
 /* Background image for large screens (e.g., desktops) */
 @media (min-width: 1025px) {
-  body {
+  body.home {
     background-image: url('./assets/Landinppic.JPEG');
   }
 }
-
-
