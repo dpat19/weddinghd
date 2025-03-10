@@ -1,37 +1,49 @@
 /* Navbar Styling */
 .navbar {
-    padding: 500px 10px; /* Adjust padding for better space distribution */
-    width: 100%; /* Ensure it takes up the full width of the screen */
-    max-width: 1600px; /* Limit the width of the navbar on larger screens */
+    padding: 20px 10px; /* Reduced top padding for better space distribution */
+    width: 100%; /* Ensure full width */
+    max-width: 100%; /* Allow it to take up full screen width */
     margin: 0 auto; /* Center the navbar horizontally */
-    box-sizing: border-box; /* Ensure padding is included in width calculation */
-   /* Optional: Add a background color to the navbar */
+    box-sizing: border-box; /* Include padding in width calculation */
     color: white; /* Navbar text color */
+    text-align: center; /* Center align navbar content */
+    position: relative;
+}
+
+/* Hamburger Menu Icon */
+.menu-icon {
+    display: none;
+    font-size: 32px;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: rgb(63, 18, 0);
+    z-index: 1001;
 }
 
 /* Navbar List Styling */
 .nav-list {
     display: flex;
-    justify-content: space-evenly; /* Evenly space out items */
+    justify-content: center; /* Center items horizontally */
     list-style: none;
     margin: 0;
     padding: 0;
-    flex-wrap: nowrap; /* Prevent wrapping to the next line */
-    width: 100%; /* Ensure the list takes up full width */
-    overflow: hidden; /* Prevent items from spilling */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    width: 100%; /* Ensure full width */
 }
 
 /* Navbar Item Styling */
 .nav-item {
-    margin: 0 50px; /* Control space between navbar items */
+    margin: 0 20px; /* Adjust space between navbar items */
     flex-shrink: 0; /* Prevent items from shrinking */
 }
 
 /* Navbar Link Styling */
 .nav-link {
-    color: rgb(63, 18, 0); /* Set font color to rgb(63, 18, 0) */
+    color: rgb(63, 18, 0); /* Set font color */
     text-decoration: none;
-    font-size: 100px; /* Normal font size */
+    font-size: 32px; /* Increased font size */
     padding-bottom: 5px;
     transition: color 0.3s ease;
     display: block; /* Ensures clickable area */
@@ -51,22 +63,39 @@
 
 /* Responsive Styling */
 @media (max-width: 768px) {
-    .nav-link {
-        font-size: 16px; /* Slightly smaller text for medium screens */
+    .menu-icon {
+        display: block;
+    }
+    .nav-list {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        right: -250px; /* Initially hidden off-screen */
+        background-color: rgba(255, 255, 255, 0.9); /* Transparent background */
+        width: 250px;
+        height: 100vh;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+        transition: right 0.3s ease-in-out;
+        padding-top: 60px;
+        z-index: 1000;
+    }
+    .nav-list.show {
+        right: 0; /* Slide in from the right */
+        display: flex;
     }
     .nav-item {
-        margin: 0 15px; /* Reduce space on smaller screens */
+        margin: 20px 0; /* Space out stacked items */
+        text-align: left;
+        padding: 15px;
+    }
+    .nav-link {
+        font-size: 24px;
     }
 }
 
 @media (max-width: 480px) {
-    .nav-list {
-        justify-content: center; /* Center items on mobile screens */
-    }
     .nav-link {
-        font-size: 14px; /* Smaller text on mobile screens */
-    }
-    .nav-item {
-        margin: 0 10px; /* Consistent spacing on mobile */
+        font-size: 22px; /* Larger text on mobile for better readability */
     }
 }
