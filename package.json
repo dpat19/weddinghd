@@ -12,10 +12,15 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@heroui/react": "^2.7.4",
+    "@mui/icons-material": "^6.4.7",
+    "@mui/material": "^6.4.7",
     "@tailwindcss/vite": "^4.0.12",
     "framer-motion": "^12.4.10",
     "react": "^19.0.0",
+    "react-countdown": "^2.3.6",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.3.0"
   },
