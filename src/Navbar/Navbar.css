@@ -8,8 +8,8 @@
     color: white;
     text-align: center;
     position: relative;
-    background: rgba(255, 255, 255, 0.1); /* Subtle transparency */
-    backdrop-filter: blur(10px); /* Modern glass effect */
+    /* Subtle transparency */
+     /* Modern glass effect */
     border-radius: 10px;
 }
 

@@ -16,9 +16,9 @@ const Navbar = () => {
                     onClick={() => { setActiveTab('home'); setMenuOpen(false); }}>
                     <Link to="/" className="nav-link">Home</Link>
                 </li>
-                <li className={`nav-item ${activeTab === 'Our Story' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('Our Story'); setMenuOpen(false); }}>
-                    <a href="#" className="nav-link">Our Story</a>
+                <li className={`nav-item ${activeTab === 'Photos' ? 'active' : ''}`}
+                    onClick={() => { setActiveTab('Photos'); setMenuOpen(false); }}>
+                    <Link to="/weddinghd/photos" className="nav-link">Photos</Link>
                 </li>
                 <li className={`nav-item ${activeTab === 'RSVP' ? 'active' : ''}`}
                     onClick={() => { setActiveTab('RSVP'); setMenuOpen(false); }}>
@@ -26,7 +26,7 @@ const Navbar = () => {
                 </li>
                 <li className={`nav-item ${activeTab === 'FAQ' ? 'active' : ''}`}
                     onClick={() => { setActiveTab('FAQ'); setMenuOpen(false); }}>
-                    <a href="#" className="nav-link">FAQ</a>
+                    <Link href="#" className="nav-link">FAQ</Link>
                 </li>
             </ul>
             <Outlet />
