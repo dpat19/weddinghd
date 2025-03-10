@@ -15,8 +15,8 @@ export default defineConfig({
   assetsInclude: ['**/*.JPG', '**/*.jpeg', '**/*.png', '**/*.gif', '**/*.svg'],
   optimizeDeps: {
     include: [
-      '@mui/material',       // Include MUI Material for optimization
-      '@mui/icons-material', // Include Material Icons if used
+      '@mui/material',       
+      '@mui/icons-material', 
     ]
   }
 })
