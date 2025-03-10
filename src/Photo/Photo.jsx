@@ -27,19 +27,19 @@ const Photo = () => {
       }}
     >
       <ImageList
-        variant="masonry"  // Use masonry variant for dynamically sized items
+        variant="masonry"  
         cols={2}  // Set to 2 columns
-        gap={16}  // Add some space between the images
+        gap={16}  
         sx={{
           width: '100%',
-          height: 'auto',  // Allow height to adjust based on content
+          height: 'auto',  
         }}
       >
         {itemData.map((item) => (
           <ImageListItem key={item.img}>
             <img
               srcSet={`${item.img}?w=248&fit=crop&auto=format 1x`} // Provide 2x resolution
-              src={`${item.img}?w=248&fit=crop&auto=format`} // Fallback src
+              src={`${item.img}?w=248&fit=crop&auto=format`} 
               alt={item.title}
               loading="lazy"
               style={{
