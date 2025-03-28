@@ -11,7 +11,7 @@ const App = () => {
 
   useEffect(() => {
     // Add the 'home' class to the body if we are on the homepage
-    if (location.pathname === '/') {
+    if (location.pathname === '/weddinghd' || location.pathname === '/weddinghd/photos'  || location.pathname === '/weddinghd/'  ) {
       document.body.classList.add('home');
     } else {
       document.body.classList.remove('home');
@@ -20,10 +20,10 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
+       {location.pathname !== '/weddinghd/rsvp' && <Navbar />}
 
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route path="/weddinghd" element={<LandingPage />} />
         <Route path="/weddinghd/rsvp" element={<Rsvp />} />
         <Route path="/weddinghd/photos" element={<Photo />} />
       </Routes>

@@ -1,0 +1,31 @@
+/* Photo.css */
+
+.photo-container {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: scroll;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px;
+   
+  }
+  
+  .image-list {
+    width: 90%;
+    height: auto;
+  }
+  
+  .image-item {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .image-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  

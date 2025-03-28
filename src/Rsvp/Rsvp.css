@@ -1,0 +1,152 @@
+/* Ensure the RSVP container takes full height of the viewport */
+.rsvp-container {
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  z-index: 1;
+  color: black; /* Make all text black */
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+/* Fixed Top Section with Progress Bar */
+.rsvp-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2; /* Ensure it's on top of everything else */
+  display: flex;
+  justify-content: center; /* Center the progress bar */
+  align-items: center; /* Vertically center the progress bar */
+  padding: 10px 0;
+}
+
+/* Progress bar centered and wider */
+.rsvp-progress {
+  width: 70%; /* Increase the width of the progress bar */
+  max-width: 600px; /* Max width to prevent it from being too wide */
+}
+
+/* Close button positioned at the top right */
+.rsvp-exit {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  cursor: pointer;
+  color: black;
+  z-index: 3;
+}
+
+/* Wedding Title and Instructions */
+.rsvp-title, .rsvp-subtitle {
+  text-align: center;
+  margin: 10px 0;
+  color: black; /* Make sure all text is black */
+  padding-top: 60px; /* Add top padding to avoid overlap with fixed header */
+}
+
+/* Content inside RSVP */
+.rsvp-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px; /* Set maximum width for larger screens */
+  position: relative;
+  margin-top: 80px; /* Offset content below the fixed header */
+  z-index: 1;
+}
+
+/* Title for the form */
+.rsvp-form-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Input field */
+.rsvp-input {
+  width: 100%;
+  max-width: 400px; /* Set the width of the text box */
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* Button styling */
+.rsvp-button {
+  width: 100%;
+  max-width: 400px; /* Set the width of the button */
+  margin-top: 10px;
+}
+
+/* Button group for back and submit */
+.rsvp-buttons {
+  display: flex;
+  justify-content: center; /* Center the buttons */
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.rsvp-back {
+  flex: 1;
+  margin-right: 10px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .rsvp-header {
+    padding: 10px 0;
+  }
+
+  .rsvp-progress {
+    width: 80%; /* Wider progress bar on mobile */
+  }
+
+  .rsvp-exit {
+    font-size: 25px;
+    top: 10px;
+    right: 2px;
+  }
+
+  /* Content area on mobile */
+  .rsvp-content {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  /* Title font size */
+  .rsvp-form-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  /* Input field on mobile */
+  .rsvp-input {
+    margin-bottom: 15px;
+  }
+
+  /* Button on mobile */
+  .rsvp-button {
+    margin-bottom: 10px;
+  }
+
+  /* Button group layout for mobile */
+  .rsvp-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .rsvp-back {
+    margin-right: 0;
+  }
+}

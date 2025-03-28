@@ -14,7 +14,7 @@ const Navbar = () => {
             <ul className={`nav-list ${menuOpen ? 'show' : ''}`}>
                 <li className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}
                     onClick={() => { setActiveTab('home'); setMenuOpen(false); }}>
-                    <Link to="/" className="nav-link">Home</Link>
+                    <Link to="/weddinghd" className="nav-link">Home</Link>
                 </li>
                 <li className={`nav-item ${activeTab === 'Photos' ? 'active' : ''}`}
                     onClick={() => { setActiveTab('Photos'); setMenuOpen(false); }}>
