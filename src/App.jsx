@@ -4,6 +4,7 @@ import LandingPage from './Landing/Landing';
 import Navbar from './Navbar/Navbar';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Rsvp from './Rsvp/Rsvp';
+import PostData from './PostData/PostData';
 import Photo from './Photo/Photo';
 
 const App = () => {
@@ -25,7 +26,7 @@ const App = () => {
       <Routes>
         <Route path="/weddinghd" element={<LandingPage />} />
         <Route path="/weddinghd/rsvp" element={<Rsvp />} />
-        <Route path="/weddinghd/photos" element={<Photo />} />
+        <Route path="/weddinghd/photos" element={<PostData />} />
       </Routes>
     </>
   );

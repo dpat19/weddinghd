@@ -2,9 +2,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap");
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
 
-/* Ensure the RSVP container takes full height of the viewport */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
 
-
+/* The main container */
 .rsvp-container {
   position: relative;
   top: 0;
@@ -14,6 +18,7 @@
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  color: inherit;
   padding: 20px;
   z-index: 1;
   color: rgb(126, 116, 115);
@@ -21,7 +26,7 @@
   align-items: center; /* Center content horizontally */
 }
 
-/* Fixed Top Section with Progress Bar */
+/* Fixed top section with progress bar */
 .rsvp-header {
   position: absolute;
   top: 0;
@@ -52,32 +57,29 @@
   z-index: 3;
 }
 
-/* Wedding Title and Instructions */
-.rsvp-title, .rsvp-subtitle {
+/* Title and subtitle */
+.rsvp-title,
+.rsvp-subtitle {
   text-align: center;
   margin: 10px 0;
   color: rgb(126, 116, 115);
   padding-top: 60px;
   font-family: 'Dancing Script', cursive;
-
 }
 
-/* Increase title size for the first page */
+/* Increase the main title size */
 .rsvp-title {
   font-size: 40px;
   color: rgb(126, 116, 115);
 }
 
-/* Centered content container for forms */
-
-
-/* Container for guests if needed */
+/* Guest container if needed */
 .rsvp-guests-container {
   width: 100%;
   margin-top: 20px;
 }
 
-/* Guest styling */
+/* Each guest row */
 .rsvp-guest {
   text-align: center;
   margin-bottom: 15px;
@@ -99,32 +101,44 @@
 
 /* Base styling for accept/decline buttons */
 .rsvp-option-button {
-  border: 1px solid #ccc;
+  border: 1px solid #b5a89e;
   transition: background-color 0.2s ease;
 }
 
-/* When selected, add a border color change (check icon indicates selection) */
+/* Highlight the border when selected (check icon indicates selection) */
 .rsvp-option-button.selected {
-  border-color: #b5a89e;
+  background-color: inherit !important;
+  border-color: inherit !important;
+  color: inherit !important;
 }
-
 /* Continue button styling */
 .rsvp-continue-button {
   width: 100%;
   background-color: #b5a89e;
+  color: rgb(126, 116, 115);
+  font-family: 'EB Garamond', serif;
   color: white;
   padding: 12px 0;
   font-size: 16px;
   margin-top: 20px;
 }
 
-/* Title for the form */
+
+/* Title for each form step */
 .rsvp-form-title {
   text-align: center;
   margin-bottom: 20px;
   color: rgb(126, 116, 115);
   font-family: 'EB Garamond', serif;
 }
+
+.rsvp-form-titles {
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'Dancing Script', cursive !important;
+  color: rgb(126, 116, 115) !important;
+}
+
 
 /* Input field styling */
 .rsvp-input {
@@ -138,27 +152,37 @@
   color: rgb(126, 116, 115);
 }
 
-/* Button styling */
+/* ------------------------------ */
+/* BUTTONS: MOBILE VS. DESKTOP   */
+/* ------------------------------ */
+
+/* By default (mobile), each button is 100% wide and stacked */
 .rsvp-button {
   width: 100%;
-  max-width: 400px;
   margin-top: 10px;
 }
 
-/* Button group for back and submit */
+/* The container for multiple buttons (e.g. Back & Next) */
 .rsvp-buttons {
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* stack them by default */
   gap: 10px;
   margin-top: 10px;
 }
 
-.rsvp-back {
-  flex: 1;
-  margin-right: 10px;
+/* Larger screens: put buttons side by side, each narrower */
+@media (min-width: 768px) {
+  .rsvp-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+  .rsvp-button {
+    width: 150px; /* or any preferred fixed width */
+    margin-top: 0; /* remove extra margin when side by side */
+  }
 }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness (extra rules if needed) */
 @media (max-width: 768px) {
   .rsvp-header {
     padding: 10px 0;
@@ -172,32 +196,5 @@
     font-size: 25px;
     top: 10px;
     right: 2px;
-  }
-
-  .rsvp-content {
-    max-width: 100%;
-    padding: 15px;
-  }
-
-  .rsvp-form-title {
-    font-size: 20px;
-    margin-bottom: 15px;
-  }
-
-  .rsvp-input {
-    margin-bottom: 15px;
-  }
-
-  .rsvp-button {
-    margin-bottom: 10px;
-  }
-
-  .rsvp-buttons {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .rsvp-back {
-    margin-right: 0;
   }
 }

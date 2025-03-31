@@ -16,7 +16,7 @@ import "./Rsvp.css";
 
 const { Title } = Typography;
 
-// Define your custom order for events.
+// Define a custom order for events.
 const eventOrder = [
   "HernishaMehndi",
   "HernishaPithi",
@@ -27,25 +27,22 @@ const eventOrder = [
 ];
 
 const Rsvp = () => {
-  // Steps:
-  // Step 1: Enter access code.
-  // Steps 2 .. (1+numberOfEvents): One event page per event.
-  // Final step (step === totalSteps): Summary page.
+  // Step 1: Access code input; Steps 2+ are event pages.
   const [step, setStep] = useState(1);
   const [accessCode, setAccessCode] = useState("");
-  const [familyMembers, setFamilyMembers] = useState([]); // user docs for this family.
-  const [filteredEvents, setFilteredEvents] = useState([]); // events relevant to this family (sorted)
+  const [familyMembers, setFamilyMembers] = useState([]); // Array of user documents for this family.
+  const [filteredEvents, setFilteredEvents] = useState([]); // Sorted events for which at least one family member is invited.
   // Local RSVP responses: { eventId: { userId: "Yes" | "No" | "pending" } }
   const [rsvpResponses, setRsvpResponses] = useState({});
   const [allEvents, setAllEvents] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch all events on mount.
+  // Fetch all events from Firestore on mount.
   useEffect(() => {
     const fetchAllEvents = async () => {
       try {
-        const snapshot = await getDocs(collection(db, "events"));
-        const eventsArr = snapshot.docs.map(doc => ({
+        const eventsSnapshot = await getDocs(collection(db, "events"));
+        const eventsArr = eventsSnapshot.docs.map(doc => ({
           id: doc.id,
           ...doc.data()
         }));
@@ -57,7 +54,39 @@ const Rsvp = () => {
     fetchAllEvents();
   }, []);
 
-  // Step 1: Validate access code, fetch family members, and set initial RSVP state based on existing user responses.
+  // When on an event page (step>=2), re-read the RSVP responses from Firestore
+  // for the current event and update local state.
+  useEffect(() => {
+    const fetchEventRsvp = async () => {
+      if (step < 2 || filteredEvents.length === 0) return;
+      const currentEvent = filteredEvents[step - 2];
+      try {
+        const eventRef = doc(db, "events", currentEvent.id);
+        const eventSnap = await getDoc(eventRef);
+        if (eventSnap.exists()) {
+          const data = eventSnap.data();
+          let newResponses = {};
+          // data.rsvpList is an object mapping userName -> "Yes" or "No"
+          if (data.rsvpList) {
+            familyMembers.forEach(member => {
+              if (data.rsvpList[member.name]) {
+                newResponses[member.id] = data.rsvpList[member.name];
+              }
+            });
+          }
+          setRsvpResponses(prev => ({
+            ...prev,
+            [currentEvent.id]: newResponses
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching event RSVP responses:", error);
+      }
+    };
+    fetchEventRsvp();
+  }, [step, filteredEvents, familyMembers]);
+
+  // Validate the access code, fetch family members, and filter events.
   const handleValidateAccessCode = async () => {
     if (!accessCode) {
       alert("Please enter an access code.");
@@ -65,18 +94,18 @@ const Rsvp = () => {
     }
     try {
       // Query families collection.
-      const famQuery = query(
+      const familyQuery = query(
         collection(db, "families"),
         where("accessCode", "==", accessCode)
       );
-      const famSnapshot = await getDocs(famQuery);
-      if (famSnapshot.empty) {
+      const familySnapshot = await getDocs(familyQuery);
+      if (familySnapshot.empty) {
         alert("Invalid access code.");
         return;
       }
-      const famDoc = famSnapshot.docs[0];
-      const famData = famDoc.data();
-      const memberIds = famData.members || [];
+      const familyDoc = familySnapshot.docs[0];
+      const familyData = familyDoc.data();
+      const memberIds = familyData.members || [];
       if (memberIds.length === 0) {
         alert("No family members found for this access code.");
         return;
@@ -93,7 +122,9 @@ const Rsvp = () => {
       }));
       setFamilyMembers(members);
 
-      // Filter events: keep only events where at least one family member is invited.
+      // Filter events: keep only those events where at least one family member
+      // has that event ID in their 'events' array.
+      const familyMemberIds = members.map(m => m.id);
       const relevantEvents = allEvents.filter(event =>
         members.some(member => member.events && member.events.includes(event.id))
       );
@@ -101,30 +132,25 @@ const Rsvp = () => {
         alert("None of your family members are invited to any events.");
         return;
       }
-      // Sort events using custom order.
+      // Sort events using the custom eventOrder.
       const sortedEvents = relevantEvents.sort((a, b) => {
         return eventOrder.indexOf(a.id) - eventOrder.indexOf(b.id);
       });
       setFilteredEvents(sortedEvents);
 
-      // Initialize RSVP responses.
-      // For each event and for each invited member, prefill with the response stored in the user document (if available) or default to "pending".
+      // Initialize RSVP responses for each event (only for invited members).
       const initialResponses = {};
       sortedEvents.forEach(event => {
         initialResponses[event.id] = {};
         members.forEach(member => {
           if (member.events && member.events.includes(event.id)) {
-            // Use the saved response if it exists in member.rsvp; otherwise, default to "pending".
-            initialResponses[event.id][member.id] =
-              member.rsvp && member.rsvp[event.id]
-                ? member.rsvp[event.id]
-                : "pending";
+            initialResponses[event.id][member.id] = "pending";
           }
         });
       });
       setRsvpResponses(initialResponses);
 
-      // Move to first event page.
+      // Move to the first event page (Step 2).
       setStep(2);
     } catch (error) {
       console.error("Error validating access code:", error);
@@ -132,7 +158,7 @@ const Rsvp = () => {
     }
   };
 
-  // Handler for Accept/Decline buttons.
+  // Handler for Accept/Decline button clicks.
   const handleResponse = async (eventId, userId, response) => {
     const rsvpValue = response === "accept" ? "Yes" : "No";
     // Update local state.
@@ -144,68 +170,62 @@ const Rsvp = () => {
       }
     }));
     try {
-      // Update the user's document in the "users" collection.
+      // Update user's document.
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         [`rsvp.${eventId}`]: rsvpValue
       });
+      console.log(`User ${userId} RSVP for ${eventId} updated to ${rsvpValue}`);
     } catch (error) {
       console.error("Error updating user RSVP:", error);
     }
     try {
-      // Update the event's document in the "events" collection.
-      // Use the user's name as the key.
+      // Update event's document, using user's name instead of ID.
       const member = familyMembers.find(m => m.id === userId);
       const userName = member ? member.name : userId;
       const eventRef = doc(db, "events", eventId);
       await updateDoc(eventRef, {
         [`rsvpList.${userName}`]: rsvpValue
       });
+      console.log(`Event ${eventId} RSVPList updated for ${userName} to ${rsvpValue}`);
     } catch (error) {
       console.error("Error updating event RSVPList:", error);
     }
   };
 
   // Navigation handlers.
-  // Total steps: 1 (access code page) + (number of event pages) + 1 (summary)
-  const totalSteps = 1 + filteredEvents.length + 1;
-
   const handleNext = () => {
-    if (step < totalSteps) {
+    if (step < 2 + filteredEvents.length - 1) {
       setStep(step + 1);
+    } else {
+      alert("You have reached the end of your events. Thank you!");
+      // Optionally, perform final actions.
     }
   };
 
   const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
+    if (step > 1) setStep(step - 1);
   };
 
   const handleClose = () => {
     navigate("/weddinghd");
   };
 
-  // Render an event page for the event at index (step - 2).
+  // Render the event page for the event at index (step - 2).
   const renderEventPage = (eventObj) => {
-    // For this event, show only family members whose 'events' array includes eventObj.id.
+    // For this event, only show family members who are invited (i.e. their 'events' array includes eventObj.id).
     const invitedMembers = familyMembers.filter(member =>
       member.events && member.events.includes(eventObj.id)
     );
     return (
       <>
-        <Title level={3} className="rsvp-form-title"
-         style={{
-          fontFamily: "'Dancing Script', cursive",
-          color: "rgb(126,116,115)"
-        }}
-        >{eventObj.title}</Title>
+        <Title level={3} className="rsvp-form-titles">{eventObj.title}</Title>
         <p className="rsvp-event-details">
           📅 <strong>{eventObj.date}</strong>
         </p>
         <p className="rsvp-event-details">
           📍 <strong>{eventObj.location}</strong>{" "}
-          
+          <a href="#">View Full Address</a>
         </p>
         <div className="rsvp-guests-container">
           {invitedMembers.length > 0 ? (
@@ -214,26 +234,16 @@ const Rsvp = () => {
                 <p className="rsvp-guest-name">{member.name}</p>
                 <div className="rsvp-options">
                   <Button
-                    className={`rsvp-option-button accept ${
-                      rsvpResponses[eventObj.id]?.[member.id] === "Yes" ? "selected" : ""
-                    }`}
+                    className={`rsvp-option-button accept ${rsvpResponses[eventObj.id]?.[member.id] === "Yes" ? "selected" : ""}`}
                     onClick={() => handleResponse(eventObj.id, member.id, "accept")}
                   >
-                    Accept{" "}
-                    {rsvpResponses[eventObj.id]?.[member.id] === "Yes" && (
-                      <CheckOutlined style={{ marginLeft: 8 }} />
-                    )}
+                    Accept {rsvpResponses[eventObj.id]?.[member.id] === "Yes" && <CheckOutlined style={{ marginLeft: 8 }} />}
                   </Button>
                   <Button
-                    className={`rsvp-option-button decline ${
-                      rsvpResponses[eventObj.id]?.[member.id] === "No" ? "selected" : ""
-                    }`}
+                    className={`rsvp-option-button decline ${rsvpResponses[eventObj.id]?.[member.id] === "No" ? "selected" : ""}`}
                     onClick={() => handleResponse(eventObj.id, member.id, "decline")}
                   >
-                    Decline{" "}
-                    {rsvpResponses[eventObj.id]?.[member.id] === "No" && (
-                      <CheckOutlined style={{ marginLeft: 8 }} />
-                    )}
+                    Decline {rsvpResponses[eventObj.id]?.[member.id] === "No" && <CheckOutlined style={{ marginLeft: 8 }} />}
                   </Button>
                 </div>
               </div>
@@ -245,56 +255,16 @@ const Rsvp = () => {
         <div className="rsvp-buttons">
           <Button className="rsvp-back" onClick={handleBack}>Back</Button>
           <Button type="primary" className="rsvp-continue-button" onClick={handleNext}>
-            {step < totalSteps - 1 ? "Next" : "Finish"}
+            {step < 2 + filteredEvents.length - 1 ? "Next" : "Finish"}
           </Button>
         </div>
       </>
     );
   };
 
-  // Render the summary page (final step).
-  const renderSummaryPage = () => {
-    return (
-      <>
-        <Title level={3} style={{ textAlign: "center" }}>
-          All Set! Here’s what we sent Hernisha & Dhruv.
-        </Title>
-        <div className="summary-container">
-          {filteredEvents.map(eventObj => {
-            const invited = familyMembers.filter(
-              m => m.events && m.events.includes(eventObj.id)
-            );
-            return (
-              <div key={eventObj.id} className="summary-event">
-                <Title level={4}>{eventObj.title}</Title>
-                {invited.map(member => {
-                  const response = rsvpResponses[eventObj.id]?.[member.id];
-                  return (
-                    <p key={member.id}>
-                      {member.name}:{" "}
-                      {response === "Yes"
-                        ? "Going"
-                        : response === "No"
-                        ? "Not Going"
-                        : "Pending"}
-                    </p>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-        <Button
-          style={{ marginTop: "20px", display: "block", margin: "0 auto" }}
-          onClick={() => navigate("/weddinghd")}
-        >
-          BACK TO HOMEPAGE
-        </Button>
-      </>
-    );
-  };
+  // Total steps = 1 (access code page) + number of event pages.
+  const totalSteps = 1 + filteredEvents.length;
 
-  // Render logic.
   return (
     <div className="rsvp-container">
       <div className="rsvp-header">
@@ -310,13 +280,8 @@ const Rsvp = () => {
 
       {step === 1 && (
         <div className="access-code-step">
-          <h1 className="rsvp-title">Hernisha & Dhruv's Wedding</h1>
-          <Title level={2} className="rsvp-form-title" 
-          style={{
-          fontFamily: "'EB Garamond', serif",
-          color: "rgb(126,116,115)"
-        }}
-          >Enter Your Access Code</Title>
+        <h1 className="rsvp-title">Hernisha & Dhruv's Wedding</h1>
+          <Title level={2} className="rsvp-form-title">Enter Your Access Code</Title>
           <Input
             placeholder="Access Code"
             maxLength={10}
@@ -327,16 +292,15 @@ const Rsvp = () => {
           <Button
             type="primary"
             className="rsvp-continue-button"
+            keyboardType='number-pad'
             onClick={handleValidateAccessCode}
           >
-            Next
+            Find Your Invitation
           </Button>
         </div>
       )}
 
-      {step >= 2 && step < totalSteps && filteredEvents.length > 0 && renderEventPage(filteredEvents[step - 2])}
-
-      {step === totalSteps && renderSummaryPage()}
+      {step >= 2 && filteredEvents.length > 0 && renderEventPage(filteredEvents[step - 2])}
     </div>
   );
 };
