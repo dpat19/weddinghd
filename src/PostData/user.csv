@@ -1,4 +1,2 @@
 id,name,email,phone,familyId,events,rsvp
-guest123,Dhruv Patel,,+732-789-5802,fam001,"HernishaMehndi,HernishaPithi,DhruvPithi,Sangeet,WeddingCeremony,AfterParty","{""HernishaMehndi"":""Going"",""HernishaPithi"":""Not Going"",""DhruvPithi"":""Maybe"",""Sangeet"":""Going"",""WeddingCeremony"":""Going"",""AfterParty"":""Going""}"
-guest456,Hernisha Radia,hernisha@example.com,+123456789,fam001,"HernishaMehndi,HernishaPithi,DhruvPithi,Sangeet,WeddingCeremony,AfterParty","{""HernishaMehndi"":""Maybe"",""HernishaPithi"":""Going"",""DhruvPithi"":""Not Going"",""Sangeet"":""Maybe"",""WeddingCeremony"":""Going"",""AfterParty"":""Going""}"
-guest789,Raj Mehta,raj@example.com,+987654321,fam002,"HernishaMehndi,DhruvPithi,WeddingCeremony","{""HernishaMehndi"":""Not Going"",""DhruvPithi"":""Maybe"",""WeddingCeremony"":""Going""}"
+guest978,Raj Mehta,raj@example.com,+987654321,fam003,"HernishaMehndi,DhruvPithi,WeddingCeremony","{""HernishaMehndi"":"""",""DhruvPithi"":"""",""WeddingCeremony"":""""}"

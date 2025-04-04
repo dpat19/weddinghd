@@ -48,7 +48,7 @@
         width: 6vw;
     }
     .image:last-child {
-        width: 35vw;
+        width: 75vw;
     }
     .text {
         font-size: 2vw; /* Slightly smaller text on medium screens */
@@ -60,7 +60,7 @@
         width: 8vw;
     }
     .image:last-child {
-        width: 45vw;
+        width: 75vw;
     }
     .text {
         font-size: 3vw; /* Smaller text on smaller screens */

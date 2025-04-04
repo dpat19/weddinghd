@@ -6,6 +6,21 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow-y: auto;
+}
+.rsvp-input.error {
+  border: 1px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.overlay-image {
+  max-width: 50px; /* Adjust size as needed */
+  margin-bottom: 4rem;
 }
 
 /* The main container */
@@ -45,6 +60,17 @@ html, body {
   max-width: 600px;
   color: rgb(126, 116, 115);
 }
+
+.rsvp-event-details {
+  display: flex;
+  align-items: center; /* Centers items vertically */
+}
+
+.rsvp-event-details .icon {
+  color: rgb(126, 116, 115);
+  margin-right: 5px; /* Adjust spacing between the icon and the text */
+}
+
 
 /* Close button positioned at the top right */
 .rsvp-exit {
@@ -103,6 +129,20 @@ html, body {
 .rsvp-option-button {
   border: 1px solid #b5a89e;
   transition: background-color 0.2s ease;
+  border-color: rgb(126, 116, 115) !important;
+  
+  
+}
+.rsvp-back{
+  width: 100%;
+  background-color: #b5a89e !important; 
+  color: rgb(126, 116, 115);
+  font-family: 'EB Garamond', serif;
+  color: white;
+  
+  font-size: 16px;
+  margin-top: 20px;
+  border-color: rgb(126, 116, 115) !important;
 }
 
 /* Highlight the border when selected (check icon indicates selection) */
@@ -111,6 +151,12 @@ html, body {
   border-color: inherit !important;
   color: inherit !important;
 }
+
+.rsvp-option-button.hover {
+ 
+  color: white !important;
+  
+}
 /* Continue button styling */
 .rsvp-continue-button {
   width: 100%;
@@ -118,9 +164,21 @@ html, body {
   color: rgb(126, 116, 115);
   font-family: 'EB Garamond', serif;
   color: white;
-  padding: 12px 0;
+  
   font-size: 16px;
   margin-top: 20px;
+  border-color: rgb(126, 116, 115) !important;
+}
+
+
+
+.ant-btn-primary:active,
+.ant-btn-primary:focus,
+.ant-btn-primary:hover {
+  background-color: rgb(126, 116, 115) !important;
+  border-color: rgb(126, 116, 115) !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
 }
 
 
@@ -135,6 +193,7 @@ html, body {
 .rsvp-form-titles {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 40px;
   font-family: 'Dancing Script', cursive !important;
   color: rgb(126, 116, 115) !important;
 }
@@ -150,6 +209,29 @@ html, body {
   border: 1px solid #ccc;
   font-size: 16px;
   color: rgb(126, 116, 115);
+  border-color: rgb(126, 116, 115) !important;
+}
+
+.summary-container {
+  height: calc(100vh - 60px);
+ 
+  padding: 20px;
+  text-align: center;
+  color: rgb(126,116,115);
+  font-family:'EB Garamond', serif ;
+}
+
+/* Optional: style the summary container to add spacing if needed */
+.summary-container {
+  margin-bottom: 20px;
+}
+
+.summary-event{
+  text-align: center;
+  color: rgb(126,116,115);
+  font-family:'EB Garamond', serif ;
+  
+
 }
 
 /* ------------------------------ */

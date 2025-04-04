@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Input, Button, Typography, Progress } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { RiCalendarEventLine, RiMapPin2Line } from "react-icons/ri";
 import { db } from "../../firebase";
+
 import {
   collection,
   query,
   where,
   getDocs,
-  getDoc,
   doc,
   updateDoc
 } from "firebase/firestore";
@@ -27,15 +28,11 @@ const eventOrder = [
 ];
 
 const Rsvp = () => {
-  // Steps:
-  // Step 1: Enter access code.
-  // Steps 2 .. (1+numberOfEvents): One event page per event.
-  // Final step (step === totalSteps): Summary page.
   const [step, setStep] = useState(1);
   const [accessCode, setAccessCode] = useState("");
-  const [familyMembers, setFamilyMembers] = useState([]); // user docs for this family.
-  const [filteredEvents, setFilteredEvents] = useState([]); // events relevant to this family (sorted)
-  // Local RSVP responses: { eventId: { userId: "Yes" | "No" | "pending" } }
+  const [error, setError] = useState(""); // Error message state
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [rsvpResponses, setRsvpResponses] = useState({});
   const [allEvents, setAllEvents] = useState([]);
   const navigate = useNavigate();
@@ -57,10 +54,10 @@ const Rsvp = () => {
     fetchAllEvents();
   }, []);
 
-  // Step 1: Validate access code, fetch family members, and set initial RSVP state based on existing user responses.
+  // Step 1: Validate access code, fetch family members, and set initial RSVP state.
   const handleValidateAccessCode = async () => {
     if (!accessCode) {
-      alert("Please enter an access code.");
+      setError("Please enter an access code.");
       return;
     }
     try {
@@ -71,17 +68,17 @@ const Rsvp = () => {
       );
       const famSnapshot = await getDocs(famQuery);
       if (famSnapshot.empty) {
-        alert("Invalid access code.");
+        setError("Invalid access code.");
         return;
       }
       const famDoc = famSnapshot.docs[0];
       const famData = famDoc.data();
       const memberIds = famData.members || [];
       if (memberIds.length === 0) {
-        alert("No family members found for this access code.");
+        setError("No family members found for this access code.");
         return;
       }
-      // Fetch family members from users collection using an "in" query.
+
       const usersQuery = query(
         collection(db, "users"),
         where("__name__", "in", memberIds)
@@ -98,23 +95,20 @@ const Rsvp = () => {
         members.some(member => member.events && member.events.includes(event.id))
       );
       if (relevantEvents.length === 0) {
-        alert("None of your family members are invited to any events.");
+        setError("None of your family members are invited to any events.");
         return;
       }
-      // Sort events using custom order.
+
       const sortedEvents = relevantEvents.sort((a, b) => {
         return eventOrder.indexOf(a.id) - eventOrder.indexOf(b.id);
       });
       setFilteredEvents(sortedEvents);
 
-      // Initialize RSVP responses.
-      // For each event and for each invited member, prefill with the response stored in the user document (if available) or default to "pending".
       const initialResponses = {};
       sortedEvents.forEach(event => {
         initialResponses[event.id] = {};
         members.forEach(member => {
           if (member.events && member.events.includes(event.id)) {
-            // Use the saved response if it exists in member.rsvp; otherwise, default to "pending".
             initialResponses[event.id][member.id] =
               member.rsvp && member.rsvp[event.id]
                 ? member.rsvp[event.id]
@@ -124,18 +118,18 @@ const Rsvp = () => {
       });
       setRsvpResponses(initialResponses);
 
-      // Move to first event page.
+      // Clear any error and move to the first event page.
+      setError("");
       setStep(2);
     } catch (error) {
       console.error("Error validating access code:", error);
-      alert("Error fetching data. Please try again.");
+      setError("Error fetching data. Please try again.");
     }
   };
 
-  // Handler for Accept/Decline buttons.
   const handleResponse = async (eventId, userId, response) => {
     const rsvpValue = response === "accept" ? "Yes" : "No";
-    // Update local state.
+
     setRsvpResponses(prev => ({
       ...prev,
       [eventId]: {
@@ -144,7 +138,6 @@ const Rsvp = () => {
       }
     }));
     try {
-      // Update the user's document in the "users" collection.
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, {
         [`rsvp.${eventId}`]: rsvpValue
@@ -153,8 +146,6 @@ const Rsvp = () => {
       console.error("Error updating user RSVP:", error);
     }
     try {
-      // Update the event's document in the "events" collection.
-      // Use the user's name as the key.
       const member = familyMembers.find(m => m.id === userId);
       const userName = member ? member.name : userId;
       const eventRef = doc(db, "events", eventId);
@@ -166,9 +157,9 @@ const Rsvp = () => {
     }
   };
 
-  // Navigation handlers.
-  // Total steps: 1 (access code page) + (number of event pages) + 1 (summary)
   const totalSteps = 1 + filteredEvents.length + 1;
+  const progressPercent =
+    totalSteps > 1 ? ((step - 1) / (totalSteps - 1)) * 100 : 0;
 
   const handleNext = () => {
     if (step < totalSteps) {
@@ -186,26 +177,30 @@ const Rsvp = () => {
     navigate("/weddinghd");
   };
 
-  // Render an event page for the event at index (step - 2).
   const renderEventPage = (eventObj) => {
-    // For this event, show only family members whose 'events' array includes eventObj.id.
     const invitedMembers = familyMembers.filter(member =>
       member.events && member.events.includes(eventObj.id)
     );
     return (
       <>
-        <Title level={3} className="rsvp-form-title"
-         style={{
-          fontFamily: "'Dancing Script', cursive",
-          color: "rgb(126,116,115)"
-        }}
-        >{eventObj.title}</Title>
+        <Title
+          level={3}
+          className="rsvp-form-title"
+          style={{
+            fontFamily: "'Dancing Script', cursive",
+            color: "rgb(126,116,115)",
+            fontSize: "45px"
+          }}
+        >
+          {eventObj.title}
+        </Title>
         <p className="rsvp-event-details">
-          📅 <strong>{eventObj.date}</strong>
+          <RiCalendarEventLine className="icon" />
+          <strong>{eventObj.date}</strong>
         </p>
         <p className="rsvp-event-details">
-          📍 <strong>{eventObj.location}</strong>{" "}
-          
+          <RiMapPin2Line className="icon" />
+          <strong>{eventObj.location}</strong>
         </p>
         <div className="rsvp-guests-container">
           {invitedMembers.length > 0 ? (
@@ -243,8 +238,18 @@ const Rsvp = () => {
           )}
         </div>
         <div className="rsvp-buttons">
-          <Button className="rsvp-back" onClick={handleBack}>Back</Button>
-          <Button type="primary" className="rsvp-continue-button" onClick={handleNext}>
+        <Button
+            type="primary"
+            className="rsvp-continue-button"
+            onClick={handleBack}
+          >
+            Back
+          </Button>
+          <Button
+            type="primary"
+            className="rsvp-continue-button"
+            onClick={handleNext}
+          >
             {step < totalSteps - 1 ? "Next" : "Finish"}
           </Button>
         </div>
@@ -256,7 +261,14 @@ const Rsvp = () => {
   const renderSummaryPage = () => {
     return (
       <>
-        <Title level={3} style={{ textAlign: "center" }}>
+        <Title
+          level={3}
+          style={{
+            textAlign: "center",
+            color: "rgb(126,116,115)",
+            fontFamily: "'EB Garamond', serif"
+          }}
+        >
           All Set! Here’s what we sent Hernisha & Dhruv.
         </Title>
         <div className="summary-container">
@@ -266,7 +278,17 @@ const Rsvp = () => {
             );
             return (
               <div key={eventObj.id} className="summary-event">
-                <Title level={4}>{eventObj.title}</Title>
+                <Title
+                  level={4}
+                  style={{
+                    textAlign: "center",
+                    color: "rgb(126,116,115)",
+                    fontFamily: "'Dancing Script', cursive",
+                    fontWeight: "bold"
+                  }}
+                >
+                  {eventObj.title}
+                </Title>
                 {invited.map(member => {
                   const response = rsvpResponses[eventObj.id]?.[member.id];
                   return (
@@ -285,7 +307,8 @@ const Rsvp = () => {
           })}
         </div>
         <Button
-          style={{ marginTop: "20px", display: "block", margin: "0 auto" }}
+          type="primary"
+          className="rsvp-continue-button"
           onClick={() => navigate("/weddinghd")}
         >
           BACK TO HOMEPAGE
@@ -299,7 +322,7 @@ const Rsvp = () => {
     <div className="rsvp-container">
       <div className="rsvp-header">
         <Progress
-          percent={(step / totalSteps) * 100}
+          percent={progressPercent}
           showInfo={false}
           className="rsvp-progress"
           trailColor="rgb(233,233,237)"
@@ -311,19 +334,28 @@ const Rsvp = () => {
       {step === 1 && (
         <div className="access-code-step">
           <h1 className="rsvp-title">Hernisha & Dhruv's Wedding</h1>
-          <Title level={2} className="rsvp-form-title" 
-          style={{
-          fontFamily: "'EB Garamond', serif",
-          color: "rgb(126,116,115)"
-        }}
-          >Enter Your Access Code</Title>
+          <Title
+            level={2}
+            className="rsvp-form-title"
+            style={{
+              fontFamily: "'EB Garamond', serif",
+              color: "rgb(126,116,115)"
+            }}
+          >
+            Enter Your Access Code
+          </Title>
           <Input
             placeholder="Access Code"
             maxLength={10}
             value={accessCode}
-            onChange={(e) => setAccessCode(e.target.value)}
-            className="rsvp-input"
+            onChange={(e) => {
+              setAccessCode(e.target.value);
+              // Clear error when user starts typing
+              if (error) setError("");
+            }}
+            className={`rsvp-input ${error ? "error" : ""}`}
           />
+          {error && <div className="error-message">{error}</div>}
           <Button
             type="primary"
             className="rsvp-continue-button"
@@ -331,10 +363,14 @@ const Rsvp = () => {
           >
             Next
           </Button>
+          
         </div>
       )}
 
-      {step >= 2 && step < totalSteps && filteredEvents.length > 0 && renderEventPage(filteredEvents[step - 2])}
+      {step >= 2 &&
+        step < totalSteps &&
+        filteredEvents.length > 0 &&
+        renderEventPage(filteredEvents[step - 2])}
 
       {step === totalSteps && renderSummaryPage()}
     </div>

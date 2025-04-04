@@ -120,8 +120,6 @@ const CsvUploader = () => {
         // Using default/dummy details for events; you could also extend your CSV to include these.
         const eventDoc = {
           title: `Event ${eventId}`,
-          date: "",
-          location: "",
           invited: eventsMap[eventId].invited,
           rsvpList: eventsMap[eventId].rsvpList,
         };

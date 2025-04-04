@@ -1,37 +1,75 @@
-import React, { useState } from 'react';
-import './Navbar.css'; // Ensure this contains styles for .menu-icon and .nav-list.show
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import './Navbar.css';
+
+
+import hd from "../assets/HDW-07.png";
 
 const Navbar = () => {
-    const [activeTab, setActiveTab] = useState('home'); // Default active tab is 'home'
-    const [menuOpen, setMenuOpen] = useState(false); // State to manage mobile menu visibility
+  const [activeTab, setActiveTab] = useState('home');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef(null);
 
-    return (
-        <nav className="navbar">
-            <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
-                ☰
-            </div>
-            <ul className={`nav-list ${menuOpen ? 'show' : ''}`}>
-                <li className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('home'); setMenuOpen(false); }}>
-                    <Link to="/weddinghd" className="nav-link">Home</Link>
-                </li>
-                <li className={`nav-item ${activeTab === 'Photos' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('Photos'); setMenuOpen(false); }}>
-                    <Link to="/weddinghd/photos" className="nav-link">Photos</Link>
-                </li>
-                <li className={`nav-item ${activeTab === 'RSVP' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('RSVP'); setMenuOpen(false); }}>
-                    <Link to="/weddinghd/rsvp" className="nav-link">RSVP</Link>
-                </li>
-                <li className={`nav-item ${activeTab === 'FAQ' ? 'active' : ''}`}
-                    onClick={() => { setActiveTab('FAQ'); setMenuOpen(false); }}>
-                    <Link href="#" className="nav-link">FAQ</Link>
-                </li>
-            </ul>
-            <Outlet />
-        </nav>
-    );
+  const handleLinkClick = (tab) => {
+    setActiveTab(tab);
+    setMenuOpen(false);
+  };
+
+  // Close the menu if clicking outside the navbar (optional)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuOpen && navRef.current && !navRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
+  return (
+    <nav className="navbar" ref={navRef}>
+      <div className="navbar-container">
+        {/* Hamburger icon that transitions to an X */}
+        <div 
+          className={`menu-icon ${menuOpen ? 'open' : ''}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span className="bar"></span>
+          <span className="bar"></span>
+          <span className="bar"></span>
+        </div>
+      </div>
+
+      {/* Fullscreen overlay menu */}
+      <div className={`overlay-menu ${menuOpen ? 'open' : ''}`}>
+        <ul className="overlay-nav-list">
+          <li className={`nav-item ${activeTab === 'home' ? 'active' : ''}`}>
+            <Link to="/weddinghd" className="nav-link" onClick={() => handleLinkClick('home')}>
+              Home
+            </Link>
+          </li>
+          <li className={`nav-item ${activeTab === 'Photos' ? 'active' : ''}`}>
+            <Link to="/weddinghd/photos" className="nav-link" onClick={() => handleLinkClick('Photos')}>
+              Photos
+            </Link>
+          </li>
+          <li className={`nav-item ${activeTab === 'RSVP' ? 'active' : ''}`}>
+            <Link to="/weddinghd/rsvp" className="nav-link" onClick={() => handleLinkClick('RSVP')}>
+              RSVP
+            </Link>
+          </li>
+          <li className={`nav-item ${activeTab === 'FAQ' ? 'active' : ''}`}>
+            <Link to="/weddinghd/faq" className="nav-link" onClick={() => handleLinkClick('FAQ')}>
+              FAQ
+            </Link>
+          </li>
+        </ul>
+        {/* Small image at the bottom */}
+        <img src={hd} alt="Decoration" className="overlay-image" />
+      </div>
+      <Outlet />
+    </nav>
+  );
 };
 
 export default Navbar;
