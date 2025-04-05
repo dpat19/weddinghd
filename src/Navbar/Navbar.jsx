@@ -63,8 +63,12 @@ const Navbar = () => {
               FAQ
             </Link>
           </li>
+          <li className={`nav-item ${activeTab === 'Itineray' ? 'active' : ''}`}>
+            <Link to="/wedddinghd/itinerary" className="nav-link" onClick={() => handleLinkClick('Itineray')}>
+              Itineray
+            </Link>
+          </li>
         </ul>
-        {/* Small image at the bottom */}
         <img src={hd} alt="Decoration" className="overlay-image" />
       </div>
       <Outlet />

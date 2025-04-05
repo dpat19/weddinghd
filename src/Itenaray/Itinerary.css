@@ -1,0 +1,94 @@
+.itinerary-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    color: rgb(126,116,115);
+    font-family: 'EB Garamond', serif;
+  }
+  
+  .access-code-prompt {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .event-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    text-align: center;
+  }
+  
+  .event-title {
+    margin-bottom: 10px;
+  }
+  
+  .event-detail {
+    font-size: 18px;
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .icon {
+    margin-right: 5px;
+    color: rgb(126,116,115);
+  }
+
+  /* Shake animation */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+  }
+  
+  .shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  /* Swipeable views full page styling */
+  .itinerary-page {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Hide navigation buttons on mobile screens */
+  @media screen and (min-width: 769px) {
+    .swipe-nav button {
+      display: inline-block;
+    }
+  }
+  
+  /* On smaller screens, hide navigation buttons */
+  @media screen and (max-width: 768px) {
+    .swipe-nav button {
+      display: none;
+    }
+    .swipe-nav {
+      justify-content: center;
+    }
+  }
+  
+  /* Always show decorative image fixed at bottom center */
+  .mobile-decorative {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    text-align: center;
+    background: transparent;
+    padding: 10px 0;
+  }
+  
+  .overlay-image {
+    margin: 0 20px;
+    max-height: 50px;
+  }
