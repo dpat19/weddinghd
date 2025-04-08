@@ -6,10 +6,13 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 import { RiCalendarEventLine, RiMapPin2Line } from "react-icons/ri";
 
+import IconButton from "@mui/material/IconButton";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CheckroomOutlinedIcon from "@mui/icons-material/CheckroomOutlined";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import {
   Timeline,
   TimelineItem,
@@ -210,17 +213,22 @@ const Itinerary = () => {
                 color: "rgb(126,116,115)",
               }}
             >
-              {event.title || event.id}
+              {event.title}
             </Title>
             <Timeline position="alternate">
               <TimelineItem>
                 <TimelineOppositeContent
-                  sx={{ m: "auto 0", color: "rgb(126,116,115)" }}
+                  sx={{ m: "auto 0", color: "rgb(126,116,115)"  }}
                   align="right"
                   variant="body2"
+                  style={{ fontFamily: "'EB Garamond', serif"}}
                 >
-                  {event.Address}
+                  {event.StreetAddress}
+                  <Typography variant="body2" className="itinerary-event-detail" style={{ fontFamily: "'EB Garamond', serif",  color: "rgb(126,116,115)" }}>
+                  {event.City}
+                  </Typography>
                 </TimelineOppositeContent>
+                
                 <TimelineSeparator>
                   <TimelineConnector />
                   <TimelineDot sx={{ bgcolor: "rgb(126,116,115)" }}>
@@ -232,11 +240,11 @@ const Itinerary = () => {
                   <Typography variant="body2" className="itinerary-event-detail">
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        event.location
+                        `${event.StreetAddress}, ${event.City}`
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: "inherit", textDecoration: "none" }}
+                      style={{ color: "inherit", textDecoration: "underline" , fontFamily: "'EB Garamond', serif"}}
                     >
                       {event.location}
                     </a>
@@ -249,6 +257,7 @@ const Itinerary = () => {
                   align="right"
                   variant="body2"
                   color="text.secondary"
+                  style={{ fontFamily: "'EB Garamond', serif"}}
                 >
                   {event.StartTime} - {event.EndTime}
                 </TimelineOppositeContent>
@@ -260,7 +269,7 @@ const Itinerary = () => {
                   <TimelineConnector />
                 </TimelineSeparator>
                 <TimelineContent sx={{ py: "50px", px: 2 }}>
-                  <Typography variant="body2" className="itinerary-event-detail">
+                  <Typography variant="body2" className="itinerary-event-detail" style={{ fontFamily: "'EB Garamond', serif"}}>
                     Meal Time: {event.mealTime || "N/A"}
                   </Typography>
                 </TimelineContent>
@@ -271,6 +280,7 @@ const Itinerary = () => {
                   align="right"
                   variant="body2"
                   color="text.secondary"
+                  style={{ fontFamily: "'EB Garamond', serif"}}
                 >
                   {event.dressCode || "Standard"}
                 </TimelineOppositeContent>
@@ -281,8 +291,8 @@ const Itinerary = () => {
                   </TimelineDot>
                   <TimelineConnector />
                 </TimelineSeparator>
-                <TimelineContent sx={{ py: "50px", px: 2 }}>
-                  <Typography>Dress Code</Typography>
+                <TimelineContent sx={{ py: "50px", px: 2 }} >
+                  <Typography style={{ fontFamily: "'EB Garamond', serif"}}>Dress Code</Typography>
                 </TimelineContent>
               </TimelineItem>
             </Timeline>
@@ -291,12 +301,22 @@ const Itinerary = () => {
       </SwipeableViews>
       {/* Navigation container for larger screens */}
       <div className="swipe-nav">
-        <Button disabled={index === 0} onClick={() => handleChangeIndex(index - 1)}>
-          Previous
-        </Button>
-        <Button disabled={index === filteredEvents.length - 1} onClick={() => handleChangeIndex(index + 1)}>
-          Next
-        </Button>
+        <IconButton
+          disabled={index === 0}
+          onClick={() => handleChangeIndex(index - 1)}
+          className="nav-arrow"
+          size="small"
+        >
+          <ArrowBackIosNewIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          disabled={index === filteredEvents.length - 1}
+          onClick={() => handleChangeIndex(index + 1)}
+          className="nav-arrow"
+          size="small"
+        >
+          <ArrowForwardIosIcon fontSize="small" />
+        </IconButton>
       </div>
       {/* Decorative image fixed at the bottom */}
       <div className="mobile-decorative">

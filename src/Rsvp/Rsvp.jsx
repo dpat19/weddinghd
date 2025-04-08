@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input, Button, Typography, Progress, Collapse } from "antd";
+import { Input, Button, Typography, Progress, Modal } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { RiCalendarEventLine, RiMapPin2Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -9,16 +9,13 @@ import {
   query,
   where,
   getDocs,
-  getDoc,
   doc,
   updateDoc
 } from "firebase/firestore";
 import "./Rsvp.css";
 
 const { Title } = Typography;
-const { Panel } = Collapse;
 
-// Define your custom order for events.
 const eventOrder = [
   "HernishaMehndi",
   "HernishaPithi",
@@ -29,25 +26,24 @@ const eventOrder = [
 ];
 
 const Rsvp = () => {
-  // Steps:
-  // Step 1: Access code page.
-  // Steps 2 .. (1 + numberOfEvents): One event page per event.
-  // Final step (step === totalSteps): Summary page.
   const [step, setStep] = useState(1);
   const [accessCode, setAccessCode] = useState("");
   const [error, setError] = useState("");
-  const [familyMembers, setFamilyMembers] = useState([]); // Family member user docs.
-  const [filteredEvents, setFilteredEvents] = useState([]); // Sorted events relevant to the family.
-  // Local RSVP responses: { eventId: { userId: "Yes" | "No" | "pending" } }
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [rsvpResponses, setRsvpResponses] = useState({});
   const [allEvents, setAllEvents] = useState([]);
+  const [familyDocId, setFamilyDocId] = useState(null);
   const navigate = useNavigate();
+
+  // Email Modal state.
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [email, setEmail] = useState("");
 
   // Total steps: 1 (access code) + number of event pages + 1 (summary).
   const totalSteps = 1 + filteredEvents.length + 1;
   const progressPercent = totalSteps > 1 ? ((step - 1) / (totalSteps - 1)) * 100 : 0;
 
-  // Fetch all events on mount.
   useEffect(() => {
     const fetchAllEvents = async () => {
       try {
@@ -64,7 +60,6 @@ const Rsvp = () => {
     fetchAllEvents();
   }, []);
 
-  // Step 1: Validate access code, fetch family members, filter/sort events, and initialize RSVP state.
   const handleValidateAccessCode = async () => {
     if (!accessCode) {
       setError("Please enter an access code.");
@@ -81,6 +76,7 @@ const Rsvp = () => {
         return;
       }
       const famDoc = famSnapshot.docs[0];
+      setFamilyDocId(famDoc.id);
       const famData = famDoc.data();
       const memberIds = famData.members || [];
       if (memberIds.length === 0) {
@@ -98,7 +94,6 @@ const Rsvp = () => {
       }));
       setFamilyMembers(members);
 
-      // Filter events: keep only events where at least one family member is invited.
       const relevantEvents = allEvents.filter(event =>
         members.some(member => member.events && member.events.includes(event.id))
       );
@@ -106,13 +101,11 @@ const Rsvp = () => {
         setError("None of your family members are invited to any events.");
         return;
       }
-      // Sort events based on custom order.
       const sortedEvents = relevantEvents.sort((a, b) => {
         return eventOrder.indexOf(a.id) - eventOrder.indexOf(b.id);
       });
       setFilteredEvents(sortedEvents);
 
-      // Initialize RSVP responses, prepopulated from each user's saved rsvp object.
       const initialResponses = {};
       sortedEvents.forEach(event => {
         initialResponses[event.id] = {};
@@ -128,7 +121,6 @@ const Rsvp = () => {
       setRsvpResponses(initialResponses);
 
       setError("");
-      // If any RSVP is already saved (not pending), show summary; otherwise, start with event pages.
       let hasSavedResponse = false;
       for (const evtId in initialResponses) {
         for (const uid in initialResponses[evtId]) {
@@ -150,7 +142,6 @@ const Rsvp = () => {
     }
   };
 
-  // Handler for Accept/Decline buttons.
   const handleResponse = async (eventId, userId, response) => {
     const rsvpValue = response === "accept" ? "Yes" : "No";
     setRsvpResponses(prev => ({
@@ -180,10 +171,18 @@ const Rsvp = () => {
     }
   };
 
-  // Navigation handlers.
   const handleNext = () => {
     if (step < totalSteps) {
       setStep(step + 1);
+    }
+  };
+
+  const handleContinue = () => {
+    if (step === totalSteps - 1) {
+      // Show the email modal on the last event page.
+      setShowEmailModal(true);
+    } else {
+      handleNext();
     }
   };
 
@@ -197,7 +196,22 @@ const Rsvp = () => {
     navigate("/weddinghd");
   };
 
-  // Render event page for event at index (step - 2)
+  // Updated email submission: close modal and render summary.
+  const handleEmailSubmit = async () => {
+    try {
+      if (familyDocId && email.trim()) {
+        await updateDoc(doc(db, "families", familyDocId), {
+          contactEmail: email.trim()
+        });
+      }
+    } catch (error) {
+      console.error("Error updating family email:", error);
+    }
+    setShowEmailModal(false);
+    setStep(totalSteps);
+  };
+
+  // Render event page.
   const renderEventPage = (eventObj) => {
     const invitedMembers = familyMembers.filter(member =>
       member.events && member.events.includes(eventObj.id)
@@ -220,8 +234,17 @@ const Rsvp = () => {
           <strong>{eventObj.date}</strong>
         </p>
         <p className="rsvp-event-details">
-          <RiMapPin2Line className="icon" />
-          <strong>{eventObj.location}</strong>
+          <a 
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              `${eventObj.StreetAddress}, ${eventObj.City}`
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "inherit", textDecoration: "underline" }}
+          >
+            <RiMapPin2Line className="icon" />
+            <strong>{eventObj.location}</strong>
+          </a>
         </p>
         <div className="rsvp-guests-container">
           {invitedMembers.length > 0 ? (
@@ -230,7 +253,9 @@ const Rsvp = () => {
                 <p className="rsvp-guest-name">{member.name}</p>
                 <div className="rsvp-options">
                   <Button
-                    className={`rsvp-option-button accept ${rsvpResponses[eventObj.id]?.[member.id] === "Yes" ? "selected" : ""}`}
+                    className={`rsvp-option-button accept ${
+                      rsvpResponses[eventObj.id]?.[member.id] === "Yes" ? "selected" : ""
+                    }`}
                     onClick={() => handleResponse(eventObj.id, member.id, "accept")}
                   >
                     Accept{" "}
@@ -239,7 +264,9 @@ const Rsvp = () => {
                     )}
                   </Button>
                   <Button
-                    className={`rsvp-option-button decline ${rsvpResponses[eventObj.id]?.[member.id] === "No" ? "selected" : ""}`}
+                    className={`rsvp-option-button decline ${
+                      rsvpResponses[eventObj.id]?.[member.id] === "No" ? "selected" : ""
+                    }`}
                     onClick={() => handleResponse(eventObj.id, member.id, "decline")}
                   >
                     Decline{" "}
@@ -256,7 +283,7 @@ const Rsvp = () => {
         </div>
         <div className="rsvp-buttons">
           <Button className="rsvp-back" onClick={handleBack}>Back</Button>
-          <Button type="primary" className="rsvp-continue-button" onClick={handleNext}>
+          <Button type="primary" className="rsvp-continue-button" onClick={handleContinue}>
             {step < totalSteps - 1 ? "Next" : "Finish"}
           </Button>
         </div>
@@ -322,10 +349,12 @@ const Rsvp = () => {
             Change RSVP
           </Button>
           <Button
-          type="primary"
-          className="rsvp-continue-button"
-          onClick={() => navigate("/wedddinghd/itinerary", { state: { accessCode } })}
-        >
+            type="primary"
+            className="rsvp-continue-button"
+            onClick={() =>
+              navigate("/wedddinghd/itinerary", { state: { accessCode } })
+            }
+          >
             Show Your Itinerary
           </Button>
           <Button
@@ -335,6 +364,7 @@ const Rsvp = () => {
           >
             BACK TO HOMEPAGE
           </Button>
+          
         </div>
       </>
     );
@@ -386,6 +416,25 @@ const Rsvp = () => {
       {step >= 2 && step < totalSteps && filteredEvents.length > 0 && renderEventPage(filteredEvents[step - 2])}
 
       {step === totalSteps && renderSummaryPage()}
+
+      {/* Email Modal Popup */}
+      <Modal
+        title="Enter your email"
+        visible={showEmailModal}
+        onOk={handleEmailSubmit}
+        onCancel={() => {
+          setShowEmailModal(false);
+          setStep(totalSteps);
+        }}
+        okText="Submit"
+        cancelText="X"
+      >
+        <Input
+          placeholder="yourname@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </Modal>
     </div>
   );
 };
