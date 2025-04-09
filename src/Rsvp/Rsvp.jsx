@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Typography, Progress, Modal } from "antd";
+import { Card, Divider, List } from "antd";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { RiCalendarEventLine, RiMapPin2Line } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase";
+import moment from "moment/moment";
 import {
   collection,
   query,
@@ -196,6 +198,56 @@ const Rsvp = () => {
     navigate("/weddinghd");
   };
 
+
+  const handleAddToCalendar = (eventObj) => {
+    // Ensure that eventObj and its dates field exist
+    if (!eventObj || !eventObj.dates || typeof eventObj.dates.toDate !== "function") {
+      alert("The event does not have a valid timestamp.");
+      return;
+    }
+  
+    // Convert the Firebase Timestamp to a JavaScript Date, and create a Moment object.
+    const startMoment = moment(eventObj.dates.toDate());
+    if (!startMoment.isValid()) {
+      alert("Invalid event timestamp. Cannot add to calendar.");
+      return;
+    }
+  
+    // If you don't have a separate end time, assume a default duration (e.g., 1 hour)
+    const endMoment = startMoment.clone().add(1, "hours");
+  
+    // Format the start and end times as ICS-compliant strings:
+    // Format: YYYYMMDDTHHmmssZ (UTC)
+    const dtStart = startMoment.utc().format("YYYYMMDDTHHmmss") + "Z";
+    const dtEnd = endMoment.utc().format("YYYYMMDDTHHmmss") + "Z";
+  
+    const icsContent = [
+      "BEGIN:VCALENDAR",
+      "PRODID:-//Your Company//Your App//EN",
+      "VERSION:2.0",
+      "CALSCALE:GREGORIAN",
+      "BEGIN:VEVENT",
+      `SUMMARY:${eventObj.title}`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `LOCATION:${eventObj.location}`,
+      `DESCRIPTION:RSVP event for ${eventObj.title}`,
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+  
+    // Create a Blob from the ICS content and trigger the download.
+    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${eventObj.title.replace(/\s+/g, "_")}.ics`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Updated email submission: close modal and render summary.
   const handleEmailSubmit = async () => {
     try {
@@ -291,84 +343,148 @@ const Rsvp = () => {
     );
   };
 
-  // Render final summary page.
-  const renderSummaryPage = () => {
-    return (
-      <>
-        <Title
-          level={3}
-          style={{
-            textAlign: "center",
-            fontFamily: "'Dancing Script', cursive",
-            color: "rgb(126,116,115)"
-          }}
+ 
+
+// Updated renderSummaryPage function:
+const renderSummaryPage = () => {
+  return (
+    <div
+      className="summary-page"
+      style={{
+        padding: "20px",
+        maxWidth: "100%",
+        margin: "0 auto"
+      }}
+    >
+      <Title
+        level={3}
+        style={{
+          textAlign: "center",
+          fontFamily: "'Dancing Script', cursive",
+          color: "rgb(126,116,115)",
+          marginBottom: "10px"
+        }}
+      >
+        All Set! Here’s what we sent Hernisha & Dhruv.
+      </Title>
+      <Divider style={{ borderColor: "rgb(126,116,115)" }} />
+      {filteredEvents.map((eventObj) => {
+        const invited = familyMembers.filter(
+          (m) => m.events && m.events.includes(eventObj.id)
+        );
+        return (
+          <div
+            key={eventObj.id}
+            style={{
+              backgroundColor: "transparent",
+              border: "1px solid rgb(126,116,115)",
+              borderRadius: "8px",
+              padding: "15px",
+              marginBottom: "20px",
+              width: "100%",
+              maxWidth: "90%",
+              marginLeft: "auto",
+              marginRight: "auto"
+            }}
+          >
+            <Title
+              level={4}
+              style={{
+                fontFamily: "'Dancing Script', cursive",
+                color: "rgb(126,116,115)",
+                margin: 0,
+                marginBottom: "10px"
+              }}
+            >
+              {eventObj.title}
+            </Title>
+            <List
+              dataSource={invited}
+              renderItem={(member) => {
+                const response = rsvpResponses[eventObj.id]?.[member.id];
+                return (
+                  <List.Item
+                    style={{
+                      padding: "5px 0",
+                      borderBottom: "1px dashed rgb(126,116,115)"
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                        fontFamily: "'EB Garamond', serif",
+                        color: "rgb(126,116,115)"
+                      }}
+                    >
+                      <span>{member.name}</span>
+                      <span>
+                        {response === "Yes"
+                          ? "Going"
+                          : response === "No"
+                          ? "Not Going"
+                          : "Pending"}
+                      </span>
+                    </div>
+                  </List.Item>
+                );
+              }}
+            />
+            {/* Add the "Add to Calendar" button for this event */}
+            <div style={{ textAlign: "right", marginTop: "10px" }}>
+              <Button 
+                type="link" 
+                onClick={() => handleAddToCalendar(eventObj)}
+                style={{
+                  color: "rgb(126,116,115)",
+                  fontFamily: "'EB Garamond', serif",
+                  textDecoration: "underline"
+                }}
+              >
+                + Add to Calendar
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+      <div
+        className="summary-buttons"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "15px",
+          marginTop: "30px",
+          alignItems: "center"
+        }}
+      >
+        <Button
+          type="primary"
+          onClick={() => setStep(2)}
+          style={{ width: "90%", maxWidth: "300px" }}
         >
-          All Set! Here’s what we sent Hernisha & Dhruv.
-        </Title>
-        <div className="summary-container">
-          {filteredEvents.map(eventObj => {
-            const invited = familyMembers.filter(
-              m => m.events && m.events.includes(eventObj.id)
-            );
-            return (
-              <div key={eventObj.id} className="summary-event">
-                <Title
-                  level={4}
-                  style={{
-                    textAlign: "center",
-                    fontFamily: "'Dancing Script', cursive",
-                    fontWeight: "bold",
-                    color: "rgb(126,116,115)"
-                  }}
-                >
-                  {eventObj.title}
-                </Title>
-                {invited.map(member => {
-                  const response = rsvpResponses[eventObj.id]?.[member.id];
-                  return (
-                    <p key={member.id}>
-                      {member.name}:{" "}
-                      {response === "Yes"
-                        ? "Going"
-                        : response === "No"
-                        ? "Not Going"
-                        : "Pending"}
-                    </p>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-        <div className="summary-buttons">
-          <Button
-            type="primary"
-            className="rsvp-continue-button"
-            onClick={() => setStep(2)}
-          >
-            Change RSVP
-          </Button>
-          <Button
-            type="primary"
-            className="rsvp-continue-button"
-            onClick={() =>
-              navigate("/wedddinghd/itinerary", { state: { accessCode } })
-            }
-          >
-            Show Your Itinerary
-          </Button>
-          <Button
-            type="primary"
-            className="rsvp-continue-button"
-            onClick={() => navigate("/weddinghd")}
-          >
-            BACK TO HOMEPAGE
-          </Button>
-          
-        </div>
-      </>
-    );
-  };
+          Change RSVP
+        </Button>
+        <Button
+          type="primary"
+          onClick={() =>
+            navigate("/wedddinghd/itinerary", { state: { accessCode } })
+          }
+          style={{ width: "90%", maxWidth: "300px" }}
+        >
+          Show Your Itinerary
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => navigate("/weddinghd")}
+          style={{ width: "90%", maxWidth: "300px" }}
+        >
+          Back to Homepage
+        </Button>
+      </div>
+    </div>
+  );
+};
 
   return (
     <div className="rsvp-container">
@@ -419,7 +535,7 @@ const Rsvp = () => {
 
       {/* Email Modal Popup */}
       <Modal
-        title="Enter your email"
+        
         visible={showEmailModal}
         onOk={handleEmailSubmit}
         onCancel={() => {
@@ -427,8 +543,22 @@ const Rsvp = () => {
           setStep(totalSteps);
         }}
         okText="Submit"
-        cancelText="X"
+        cancelButtonProps={{ style: { display: "none" } }} 
       >
+        <Title
+            level={1}
+            className="rsvp-form-title"
+            style={{ fontFamily: "'Dancing Script', cursive", color: "rgb(126,116,115)" }}
+          >
+            Thank You!
+          </Title>
+          <Title
+            level={5}
+            className="rsvp-form-title"
+            style={{ fontFamily: "'EB Garamond', serif", color: "rgb(126,116,115)" }}
+          >
+            If you like a copy of your RSVP response pleease enter your email!
+          </Title>
         <Input
           placeholder="yourname@example.com"
           value={email}

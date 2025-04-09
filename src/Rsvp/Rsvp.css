@@ -280,3 +280,55 @@ html, body {
     right: 2px;
   }
 }
+
+
+.ant-modal-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Customize the overlay's background color */
+.ant-modal-mask {
+  background-color: rgb(126,116,115); /* Dark overlay with 80% opacity */
+}
+
+/* Style the modal content */
+.ant-modal-content {
+  background-color: rgb(126,116,115); /* White background */
+  border-radius: 10px;       /* Rounded corners */
+  border: 1px solid rgb(126,116,115) ;    /* Light border */
+  padding: 20px;
+}
+
+/* Style the modal header and title */
+.ant-modal-header {
+  background-color: rgb(126,116,115);  /* Light gray header background */
+  border-bottom: 1px solid rgb(126,116,115);
+}
+
+.ant-modal-header .ant-modal-title {
+  font-family: 'EB Garamond', serif;
+  color: #333;
+}
+
+/* Style the modal footer and its buttons */
+.ant-modal-footer {
+  text-align: right;
+}
+
+.ant-modal-footer .ant-btn-primary {
+  width: 100%;
+  background-color: #b5a89e;
+  color: rgb(126, 116, 115);
+  font-family: 'EB Garamond', serif;
+  color: white;
+  
+  font-size: 16px;
+  margin-top: 20px;
+  border-color: rgb(126, 116, 115) !important;
+}
+
+.ant-modal-footer .ant-btn {
+  border-radius: 5px;
+}
