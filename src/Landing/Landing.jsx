@@ -39,7 +39,7 @@ const landing = () => {
         <img src={words} className="image" />
       </div>
       <div className="text">
-        <p>May 9,2026 Little Egg Harbor Township , NJ</p>
+        <p>May 9, 2026 | Little Egg Harbor Township | NJ</p>
         <p>
           <Countdown />
           Days to go!

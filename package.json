@@ -21,6 +21,7 @@
     "@mui/styled-engine-sc": "^6.4.6",
     "@tailwindcss/vite": "^4.0.12",
     "antd": "^5.24.3",
+    "axios": "^1.8.4",
     "firebase": "^11.5.0",
     "framer-motion": "^12.4.10",
     "moment": "^2.30.1",

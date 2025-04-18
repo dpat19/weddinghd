@@ -1,100 +1,105 @@
-import React from 'react';
+// Photo.jsx
+import React, { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import pic1 from '../assets/Pictab/Pic1.JPG';
-import pic2 from '../assets/Pictab/Pic2.JPG';
-import pic3 from '../assets/Pictab/Pic3.JPG';
-import pic4 from '../assets/Pictab/Pic4.JPG';
-import pic5 from '../assets/Pictab/Pic5.JPG';
-import pic6 from '../assets/Pictab/Pic6.JPG';
-import pic7 from '../assets/Pictab/Pic7.JPG';
-import pic8 from '../assets/Pictab/Pic8.JPG';
-import pic9 from '../assets/Pictab/Pic9.JPG';
-import pic10 from '../assets/Pictab/Pic10.JPG';
+import { collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 const Photo = () => {
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // A helper function to fetch 10 random photos using a two-query approach.
+  const fetchRandomPhotos = async () => {
+    try {
+      const photosRef = collection(db, 'photos');
+      // Generate a random value to split the query.
+      const randomValue = Math.random();
+
+      // First query: get photos with random >= randomValue
+      const q1 = query(
+        photosRef,
+        where('random', '>=', randomValue),
+        orderBy('random'),
+        limit(10)
+      );
+      const snapshot1 = await getDocs(q1);
+      let photoList = snapshot1.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // If fewer than 10 documents were found, retrieve additional photos with random < randomValue.
+      if (photoList.length < 10) {
+        const q2 = query(
+          photosRef,
+          where('random', '<', randomValue),
+          orderBy('random'),
+          limit(10 - photoList.length)
+        );
+        const snapshot2 = await getDocs(q2);
+        const photoList2 = snapshot2.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        photoList = photoList.concat(photoList2);
+      }
+      setPhotos(photoList);
+    } catch (error) {
+      console.error('Error fetching photos:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRandomPhotos();
+  }, []);
+
   return (
     <Box
       sx={{
-        width: '100vw',  // Take the full width of the viewport
-        height: '100vh',  // Take the full height of the viewport
-        overflowY: 'scroll',  // Enable vertical scrolling
+        width: '100vw',           // Full viewport width
+        height: '100vh',          // Full viewport height
+        overflowY: 'scroll',      // Vertical scrolling enabled
         display: 'flex',
-        justifyContent: 'center',  // Center the content horizontally
-        alignItems: 'flex-start',  // Align the content to the top
-        padding: 2,  // Add some padding for spacing
+        justifyContent: 'center', // Center contents horizontally
+        alignItems: 'flex-start', // Align contents to the top
+        padding: 2,               // Add some padding
       }}
     >
-      <ImageList
-        variant="masonry"  
-        cols={2}  // Set to 2 columns
-        gap={16}  
-        sx={{
-          width: '100%',
-          height: 'auto',  
-        }}
-      >
-        {itemData.map((item) => (
-          <ImageListItem key={item.img}>
-            <img
-              srcSet={`${item.img}?w=248&fit=crop&auto=format 1x`} // Provide 2x resolution
-              src={`${item.img}?w=248&fit=crop&auto=format`} 
-              alt={item.title}
-              loading="lazy"
-              style={{
-                width: '100%',  // Ensure the image takes up the full width of the column
-                height: 'auto',  // Maintain the aspect ratio
-              }}
-            />
-          </ImageListItem>
-        ))}
-      </ImageList>
+      {loading ? (
+        <p>Loading photos...</p>
+      ) : (
+        <ImageList
+          variant="masonry"
+          cols={2}  // 2 columns layout
+          gap={16}
+          sx={{
+            width: '100%',
+            height: 'auto',
+          }}
+        >
+          {photos.map((item) => (
+            <ImageListItem key={item.id}>
+              <img
+                // Use the link field from Firestore
+                srcSet={`${item.link}?w=248&fit=crop&auto=format 1x`}
+                src={`${item.link}?w=248&fit=crop&auto=format`}
+                alt={item.title ? item.title : 'Photo'}
+                loading="lazy"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                }}
+              />
+            </ImageListItem>
+          ))}
+        </ImageList>
+      )}
     </Box>
   );
 };
-
-const itemData = [
-  {
-    img: pic1,
-    title: 'Pic1',
-  },
-  {
-    img: pic2,
-    title: 'Pic2',
-  },
-  {
-    img: pic3,
-    title: 'Pic3',
-  },
-  {
-    img: pic4,
-    title: 'Pic4',
-  },
-  {
-    img: pic5,
-    title: 'Pic5',
-  },
-  {
-    img: pic6,
-    title: 'Pic6',
-  },
-  {
-    img: pic7,
-    title: 'Pic7',
-  },
-  {
-    img: pic8,
-    title: 'Pic8',
-  },
-  {
-    img: pic9,
-    title: 'Pic9',
-  },
-  {
-    img: pic10,
-    title: 'Pic10',
-  },
-];
 
 export default Photo;

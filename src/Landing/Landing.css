@@ -51,7 +51,7 @@
         width: 75vw;
     }
     .text {
-        font-size: 2vw; /* Slightly smaller text on medium screens */
+        font-size: 3vw; /* Slightly smaller text on medium screens */
     }
 }
 
@@ -63,6 +63,6 @@
         width: 75vw;
     }
     .text {
-        font-size: 3vw; /* Smaller text on smaller screens */
+        font-size: 4vw; /* Smaller text on smaller screens */
     }
 }

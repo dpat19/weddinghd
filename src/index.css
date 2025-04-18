@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'QueensideMedium';
+  src: url('./assets/fonts/QueensidesMedium-x30zV.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 :root {
   
 

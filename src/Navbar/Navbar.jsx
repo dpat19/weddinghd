@@ -59,13 +59,13 @@ const Navbar = () => {
             </Link>
           </li>
           <li className={`nav-item ${activeTab === 'FAQ' ? 'active' : ''}`}>
-            <Link to="/weddinghd/faq" className="nav-link" onClick={() => handleLinkClick('FAQ')}>
-              FAQ
+            <Link to="/wedddinghd/itinerary" className="nav-link" onClick={() => handleLinkClick('Itineray')}>
+              Itinerary
             </Link>
           </li>
           <li className={`nav-item ${activeTab === 'Itineray' ? 'active' : ''}`}>
-            <Link to="/wedddinghd/itinerary" className="nav-link" onClick={() => handleLinkClick('Itineray')}>
-              Itineray
+          <Link to="/weddinghd/faq" className="nav-link" onClick={() => handleLinkClick('FAQ')}>
+              FAQ
             </Link>
           </li>
         </ul>

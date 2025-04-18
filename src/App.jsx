@@ -7,6 +7,8 @@ import Rsvp from './Rsvp/Rsvp';
 import PostData from './PostData/PostData';
 import Photo from './Photo/Photo';
 import Itinerary from './Itenaray/Itenaray';
+import UploadPhoto from './PostData/photupload';
+import Faq from './Faq/Faq';
 
 const App = () => {
   const location = useLocation();
@@ -27,8 +29,9 @@ const App = () => {
       <Routes>
         <Route path="/weddinghd" element={<LandingPage />} />
         <Route path="/weddinghd/rsvp" element={<Rsvp />} />
-        <Route path="/weddinghd/photos" element={<PostData />} />
+        <Route path="/weddinghd/photos" element={<Photo />} />
         <Route path="/wedddinghd/itinerary" element={<Itinerary/>}/>
+        <Route path="/weddinghd/faq" element={<Faq />}/>
       </Routes>
     </>
   );
