@@ -11,3 +11,23 @@
     width: 50px;
   
   }
+
+  .container {
+    width: 100%; /* Full width on larger screens */
+    max-width: 100%; /* Remove the limit for desktop */
+    margin: 20px auto; /* Margin for centering and preventing bleed */
+    padding: 20px; /* Padding around the container */
+    background-color: rgba(255, 255, 255, 0.8);
+    font-family: 'EB Garamond', serif;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    height: auto; /* Let the content grow naturally */
+    overflow-y: auto; /* Allow scrolling if content is too long */
+    max-width: 90%; /* Ensure it doesn’t exceed screen width on large devices */
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }

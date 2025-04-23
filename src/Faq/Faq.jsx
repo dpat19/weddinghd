@@ -31,6 +31,7 @@ const faqs = [
 const FAQ = () => {
   return (
     <Box
+      className="container"
       sx={{
         position: 'relative',
         pb: '200px', // ensure space for the fixed footer image

@@ -284,6 +284,11 @@ const Rsvp = () => {
   };
   // Updated email submission: close modal and render summary.
   const handleEmailSubmit = async () => {
+    if (!email.trim()) {
+      setEmailError("Email is required.");
+      return;
+    }
+
     try {
       if (familyDocId && email.trim()) {
         await updateDoc(doc(db, "families", familyDocId), {
@@ -381,7 +386,7 @@ const Rsvp = () => {
           </Button>
           <Button
             type="primary"
-            className="rsvp-continue-button"
+            className="rsvp-back"
             onClick={handleContinue}
           >
             {step < totalSteps - 1 ? "Next" : "Finish"}
@@ -423,17 +428,8 @@ const Rsvp = () => {
           return (
             <div
               key={eventObj.id}
-              style={{
-                backgroundColor: "transparent",
-                border: "1px solid rgb(126,116,115)",
-                borderRadius: "8px",
-                padding: "15px",
-                marginBottom: "20px",
-                width: "100%",
-                maxWidth: "90%",
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
+              className="summary-card"
+              
             >
               <Title
                 level={4}

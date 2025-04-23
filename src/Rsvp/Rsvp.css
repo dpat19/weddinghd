@@ -10,6 +10,11 @@ html, body {
   padding: 0;
   height: 100%;
   overflow-y: auto;
+  background-image: url('/src/assets/RSVP.png');
+  background-size: cover; /* Ensure the image covers the container */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat;
+  
 }
 .rsvp-input.error {
   border: 1px solid red;
@@ -42,7 +47,11 @@ html, body {
   color: rgb(126, 116, 115);
   justify-content: center; /* Center content vertically */
   align-items: center; /* Center content horizontally */
+  
+  
 }
+
+
 
 /* Fixed top section with progress bar */
 .rsvp-header {
@@ -136,6 +145,20 @@ html, body {
   
   
 }
+
+.access-code-step {
+  background-color: rgba(255, 255, 255, 0.8); /* Light transparency for background */
+  padding: 30px;
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px; /* Ensures it doesn't overflow */
+  margin: 50px auto; /* Centered with margin at top */
+  backdrop-filter: blur(10px); /* Blur effect */
+  -webkit-backdrop-filter: blur(10px); /* Safari compatibility */
+  z-index: 3;
+}
+
 .rsvp-back{
   width: 100%;
   background-color: #b5a89e !important; 
@@ -167,7 +190,8 @@ html, body {
   color: rgb(126, 116, 115);
   font-family: 'EB Garamond', serif;
   color: white;
-  
+  border-radius: 0px;
+
   font-size: 16px;
   margin-top: 20px;
   border-color: rgb(126, 116, 115) !important;
@@ -215,26 +239,70 @@ html, body {
   border-color: rgb(126, 116, 115) !important;
 }
 
-.summary-container {
-  height: calc(100vh - 60px);
- 
+.summary-card {
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
   padding: 20px;
-  text-align: center;
-  color: rgb(126,116,115);
-  font-family:'EB Garamond', serif ;
-}
-
-/* Optional: style the summary container to add spacing if needed */
-.summary-container {
+  border-radius: 15px;
+  border: 1px solid rgb(126, 116, 115);
   margin-bottom: 20px;
+  width: 100%;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.summary-event{
-  text-align: center;
-  color: rgb(126,116,115);
-  font-family:'EB Garamond', serif ;
-  
+/* Title styling for each event */
+.event-title {
+  font-family: 'Dancing Script', cursive;
+  font-size: 25px;
+  color: rgb(126, 116, 115);
+  margin-bottom: 10px;
+}
 
+/* List item styling */
+.event-item {
+  padding: 10px 0;
+  border-bottom: 1px dashed rgb(126, 116, 115);
+}
+
+.event-item-content {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'EB Garamond', serif;
+  color: rgb(126, 116, 115);
+}
+
+.calendar-button {
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* "Add to Calendar" button styling */
+.add-to-calendar-btn {
+  color: rgb(126, 116, 115);
+  font-family: 'EB Garamond', serif;
+  text-decoration: underline;
+}
+
+.add-to-calendar-btn:hover {
+  color: #b5a89e;
+}
+
+/* Summary buttons (Change RSVP, Show Itinerary, Back to Homepage) */
+.summary-buttons button {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background-color: #b5a89e;
+  color: white;
+  font-family: 'EB Garamond', serif;
+  border-radius: 5px;
+  border: none;
+}
+
+.summary-buttons button:hover {
+  background-color: #8a6c56;
 }
 
 /* ------------------------------ */
@@ -281,6 +349,13 @@ html, body {
     font-size: 25px;
     top: 10px;
     right: 2px;
+  }
+
+  .access-code-step {
+    padding: 20px;
+    width: 90%; /* Ensure it doesn't exceed the screen width */
+    max-width: 300px; /* Makes it a bit smaller on mobile */
+    margin-top: 100px; /* Move the form further down on smaller screens */
   }
 }
 

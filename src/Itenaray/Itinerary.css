@@ -1,59 +1,88 @@
+/* General container settings */
 .itinerary-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  color: rgb(126,116,115);
+  width: 100%; /* Full width on larger screens */
+  max-width: 100%; /* Remove the limit for desktop */
+  margin: 20px auto; /* Margin for centering and preventing bleed */
+  padding: 20px; /* Padding around the container */
+  background-color: rgba(255, 255, 255, 0.8);
   font-family: 'EB Garamond', serif;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  height: auto; /* Let the content grow naturally */
+  overflow-y: auto; /* Allow scrolling if content is too long */
+  max-width: 90%; /* Ensure it doesn’t exceed screen width on large devices */
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  perspective: 1500px; /* Apply perspective for 3D effect */
 }
-  
+
+/* Styling the access code prompt */
 .access-code-prompt {
   text-align: center;
   margin-top: 20px;
 }
-  
+
+/* Each event card */
 .event-card {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(126,116,115, 0.4);
+  border-radius: 12px;
   padding: 20px;
-  margin: 20px;
+  margin: 20px 0;
   text-align: center;
+  width: 100%; /* Full width for each card */
+  height: 300px; /* Fixed height for each card */
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out;
 }
-  
+
+/* Flipping effect */
+.event-card:hover {
+  transform: rotateY(180deg); /* Card flips on hover */
+}
+
+/* Title for each event card */
 .event-title {
-  margin-bottom: 10px;
-  font-size: 28px; /* Default title font size */
+  font-size: 32px;
+  font-family: 'Dancing Script', cursive;
+  color: rgb(126,116,115);
+  margin-bottom: 15px;
 }
-  
+
+/* Event details */
 .event-detail {
-  font-size: 18px; /* Default detail font size */
+  font-size: 18px;
   margin: 5px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-  
-.icon {
-  margin-right: 5px;
   color: rgb(126,116,115);
-  font-size: 18px; /* Default icon size */
 }
 
-/* Continue button styling */
+/* Icon styling */
+.icon {
+  margin-right: 8px;
+  color: rgb(126,116,115);
+  font-size: 18px;
+}
+
+/* Continue button */
 .rsvp-continue-button {
   width: 100%;
   background-color: #b5a89e;
-  color: rgb(126, 116, 115);
-  font-family: 'EB Garamond', serif;
   color: white;
-  
   font-size: 16px;
   margin-top: 20px;
-  border-color: rgb(126, 116, 115) !important;
+  border-radius: 12px;
+  font-family: 'EB Garamond', serif;
+  text-transform: uppercase;
 }
 
-
-/* Shake animation */
+/* Shake animation for the input field */
 @keyframes shake {
   0% { transform: translateX(0); }
   25% { transform: translateX(-10px); }
@@ -61,12 +90,13 @@
   75% { transform: translateX(-10px); }
   100% { transform: translateX(0); }
 }
-  
+
+/* Apply shake effect */
 .shake {
   animation: shake 0.5s ease-in-out;
 }
-  
-/* Swipeable views full page styling */
+
+/* Full page layout for swipeable views */
 .itinerary-page {
   height: 80vh;
   display: flex;
@@ -74,7 +104,7 @@
   justify-content: center;
 }
 
-/* Navigation styling */
+/* Swipeable views navigation */
 .swipe-nav {
   display: flex;
   justify-content: center;
@@ -83,13 +113,13 @@
   width: 100%;
 }
 
-/* Hide navigation buttons on mobile screens (buttons only hidden) */
+/* Hide navigation buttons for mobile */
 @media screen and (min-width: 769px) {
   .swipe-nav button {
     display: inline-block;
   }
 }
-  
+
 @media screen and (max-width: 768px) {
   .swipe-nav button {
     display: none;
@@ -99,7 +129,7 @@
   }
 }
 
-/* Always show decorative image fixed at bottom center */
+/* Fixed decorative image at the bottom */
 .mobile-decorative {
   display: block;
   position: fixed;
@@ -108,17 +138,21 @@
   transform: translateX(-50%);
   z-index: 100;
   text-align: center;
-  background: transparent;
-  padding: 10px 0;
 }
-  
+
 .overlay-image {
-  margin: 0 20px;
+  margin: 0 0px;
   max-height: 50px;
 }
 
-/* Responsive adjustments for smaller phone screens */
+/* Mobile responsiveness */
 @media screen and (max-width: 768px) {
+  .itinerary-container {
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 95%; /* Make container a bit smaller on mobile */
+  }
+
   .event-title {
     font-size: 24px;
   }
@@ -131,7 +165,13 @@
   }
 }
 
+/* For very small screens */
 @media screen and (max-width: 480px) {
+  .itinerary-container {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
   .event-title {
     font-size: 20px;
   }
